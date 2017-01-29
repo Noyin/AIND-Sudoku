@@ -4,10 +4,14 @@
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
 A: *Student should provide answer here*
+ Constraint propagation is used to solve the naked twin problem by identifying two boxes in the same row or column that have the same value(possible numbers) and a digit count of 2.
+ Then each digit in the value(possible numbers) are removed from other boxes in the same row or column with a digit count greater than 1.
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
 A: *Student should provide answer here*
+ Constraint propagation is used to solve the diagonal sudoku problem by modifying the unitlist (declared in solution.py) to include a list of boxes that run diagonally across the Sudoku board.
+ The resulting peers dictionary (declared in solution.py) will account for boxes that are located within the diagonal path of the Sudoku board.   
 
 ### Install
 

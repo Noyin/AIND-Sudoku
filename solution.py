@@ -1,9 +1,4 @@
-import math
 assignments = []
-
-
-
-
 
 def assign_value(values, box, value):
     """
@@ -23,31 +18,27 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
-
     # Find all instances of naked twins
     # Eliminate the naked twins as possibilities for their peers
+
     for box in values:
         #check row
-        rowIndex = math.floor(boxes.index(box) / 9)
-        for i in row_units[rowIndex]:
+        for i in cross(box[0], cols):
             if i != box and values[i] == values[box] and len(values[box]) == 2:
-                for j in row_units[rowIndex]:
+                for j in cross(box[0], cols):
                      if j != i and  j != box and len(values[j]) > 1:
                           for digit in values[i]:
                               if digit in values[j]:
-                                 values = assign_value(values, j, values[j].replace(digit,''))
+                                 values = assign_value(values, j, values[j].replace(digit, ''))
     for box in values:
-        # check row
-        columnIndex = boxes.index(box) % 9
-        for i in column_units[columnIndex]:
+        # check column
+        for i in cross(rows,box[1]):
             if i != box and values[i] == values[box] and len(values[box]) == 2:
-                for j in column_units[columnIndex]:
+                for j in cross(rows,box[1]):
                     if j != i and j != box and len(values[j]) > 1:
                         for digit in values[i]:
                             if digit in values[j]:
-                               values = assign_value(values, j,values[j].replace(digit,''))
-
-
+                               values = assign_value(values, j, values[j].replace(digit, ''))
     return values
 
 
@@ -66,7 +57,6 @@ def grid_values(grid):
             Keys: The boxes, e.g., 'A1'
             Values: The value in each box, e.g., '8'. If the box has no value, then the value will be '123456789'.
     """
-
     chars = []
     digits = '123456789'
     for c in grid:
@@ -118,12 +108,9 @@ def reduce_puzzle(values):
     while not stalled:
         solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
         values = eliminate(values)
-        display(values)
-        print("\n\n\n\n")
+        ###########Naked_Twin###############
         values = naked_twins(values)
-        print("naked twin")
-        display(values)
-        print("\n\n\n\n")
+        ####################################
         values = only_choice(values)
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
         stalled = solved_values_before == solved_values_after
@@ -148,9 +135,6 @@ def search(values):
         if attempt:
             return attempt
 
-
-
-
 def solve(grid):
     """
     Find the solution to a Sudoku grid.
@@ -168,6 +152,7 @@ def solve(grid):
         return result
     return False
 
+###################################################
 
 rows = 'ABCDEFGHI'
 cols = '123456789'
@@ -175,18 +160,17 @@ boxes = cross(rows, cols)
 row_units = [cross(r, cols) for r in rows]
 column_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
-combinedDiag = []
-diag_units1 = []
-for i in range(9):
-    diag_units1.append(rows[i] + cols[i])
-diag_units2 = []
-for i in range(9):
-    diag_units2.append(rows[i] + cols[8 - i])
-combinedDiag.append(diag_units1)
-combinedDiag.append(diag_units2)
-unitlist = row_units + column_units + square_units + combinedDiag
+#########Diagonal_Sudoku#############
+diag_units = []
+diag_units.append([diagonalBox for diagonalBox in boxes if boxes.index(diagonalBox) % 10 == 0])
+diag_units.append([diagonalBox for diagonalBox in boxes if boxes.index(diagonalBox) % 8 == 0 and boxes.index(diagonalBox) != 0 and boxes.index(diagonalBox) != 80])
+####################################
+unitlist = row_units + column_units + square_units + diag_units
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s], [])) - set([s])) for s in boxes)
+
+
+###################################################
 
 if __name__ == '__main__':
     diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
